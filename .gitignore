@@ -2,4 +2,4 @@ shell
 *.o
 *.out
 *.txt
-.vscode
+.vscode/
