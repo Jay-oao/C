@@ -1,0 +1,11 @@
+{
+    "files.associations": {
+        "limits.h": "c",
+        "termios.h": "c",
+        "string.h": "c",
+        "history.h": "c",
+        "stdio.h": "c",
+        "raw_input.h": "c",
+        "stdlib.h": "c"
+    }
+}
