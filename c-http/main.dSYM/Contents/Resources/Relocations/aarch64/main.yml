@@ -1,0 +1,5 @@
+---
+triple:          'arm64-apple-darwin'
+binary-path:     '/Users/tnsatish/Desktop/books/Understanding C /c-http/main'
+relocations:     []
+...
