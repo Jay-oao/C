@@ -24,11 +24,14 @@ int main () {
     char **ARGS;
     int status = 1;
 
+    load_history();
+
     do{
         printf(RED "<0Sk> " RESET);
         fflush(stdout);
         LINE = getLine();
         addHistory(LINE);
+        save_history(LINE);
         history_set_current(NULL);
         ARGS = tokenize(LINE);
         xec_call(ARGS);

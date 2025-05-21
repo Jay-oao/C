@@ -12,5 +12,7 @@ HistoryList *history_get_tail();
 HistoryList *history_get_head();
 HistoryList *history_get_current();
 void history_set_current(HistoryList *node);
+void load_history();
+void save_history(const char *command);
 
 #endif

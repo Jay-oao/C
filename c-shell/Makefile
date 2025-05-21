@@ -12,4 +12,4 @@ shell: $(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) -o shell
 
 clean:
-	rm -f *.o shell
+	rm -f *.o 
