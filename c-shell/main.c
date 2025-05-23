@@ -9,13 +9,14 @@
 #include "history.h"
 #include "redirect.h"
 
-#define TOK_DELIM " \t\r\n"
+#define TOK_DELIM "\t\r\n"
 #define RED "\x1b[31m"
 #define YELLOW "\x1b[33m"
-#define RESET "\x1b[0m"  
+#define RESET "\x1b[0m"
+#define PIPE_DELIM "|"  
 
 
-char * *tokenize(char * );
+char * *tokenize(char * , char *);
 int xec_call(char ** );
 
 int main () {
@@ -33,7 +34,15 @@ int main () {
         addHistory(LINE);
         save_history(LINE);
         history_set_current(NULL);
-        ARGS = tokenize(LINE);
+        if(strchr(LINE, '|') != NULL) {
+            ARGS = tokenize(LINE,PIPE_DELIM);   
+        } else {
+            ARGS = tokenize(LINE, TOK_DELIM);
+        }
+        for (int i = 0; ARGS[i] != NULL; i++) {
+            printf("ARGS[%d]: '%s'\n", i, ARGS[i]);
+        }
+        
         xec_call(ARGS);
         free(LINE);
         free(ARGS);
@@ -42,7 +51,7 @@ int main () {
     return 0;
 }
 
-char * *tokenize(char *line) {
+char * *tokenize(char *line, char * DELIM) {
 
     int buffsize = 1024;
     char * *tokens = malloc(sizeof(char *)*buffsize);
@@ -53,7 +62,7 @@ char * *tokenize(char *line) {
         exit(EXIT_FAILURE);
     }
 
-    char *token = strtok(line, TOK_DELIM);
+    char *token = strtok(line, DELIM);
     while(token != NULL) {
         tokens[position++] = token;
         if(position >= buffsize) {
@@ -65,7 +74,7 @@ char * *tokenize(char *line) {
                 exit(EXIT_FAILURE);
             }
         }
-        token = strtok(NULL, TOK_DELIM);
+        token = strtok(NULL, DELIM);
     }
     tokens[position] = NULL;
     return tokens;
