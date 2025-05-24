@@ -9,15 +9,21 @@
 #include "history.h"
 #include "redirect.h"
 
-#define TOK_DELIM "\t\r\n"
+#define TOK_DELIM " \t\r\n"
 #define RED "\x1b[31m"
 #define YELLOW "\x1b[33m"
 #define RESET "\x1b[0m"
 #define PIPE_DELIM "|"  
 
+// TODO: Autocomplete maybe using tries?
+// TODO: Add support to the left and right arrow keys
+// TODO: Handle edge cases more gracefully
+// TODO: Better signal Handling
+// TODO: Support conditional Chaining 
 
 char * *tokenize(char * , char *);
 int xec_call(char ** );
+void exec_pipe_call(char **);
 
 int main () {
 
@@ -35,15 +41,12 @@ int main () {
         save_history(LINE);
         history_set_current(NULL);
         if(strchr(LINE, '|') != NULL) {
-            ARGS = tokenize(LINE,PIPE_DELIM);   
+            ARGS = tokenize(LINE,PIPE_DELIM);
+            exec_pipe_call(ARGS);   
         } else {
             ARGS = tokenize(LINE, TOK_DELIM);
+            xec_call(ARGS);
         }
-        for (int i = 0; ARGS[i] != NULL; i++) {
-            printf("ARGS[%d]: '%s'\n", i, ARGS[i]);
-        }
-        
-        xec_call(ARGS);
         free(LINE);
         free(ARGS);
     } while(status);
@@ -139,4 +142,56 @@ int xec_call(char * *args) {
     }
 
     return 1;
+}
+
+void exec_pipe_call(char **ARGS) {
+
+    int num_of_pipes = -1;
+    while(ARGS[num_of_pipes+1] != NULL) num_of_pipes++;
+
+    int pipe_fds[2*num_of_pipes];
+
+    for(int i = 0 ; i< num_of_pipes; i++) {
+        if(pipe(pipe_fds+(i*2)) < 0) {
+            perror("Pipe creation failed");
+            exit(EXIT_FAILURE);
+        }
+    }
+
+    int pid;
+    int curr_cmd_index = 0;
+
+    while(ARGS[curr_cmd_index] != NULL) {
+        char **command = tokenize(ARGS[curr_cmd_index], TOK_DELIM);
+        pid = fork();
+        if(pid == 0) {
+            if(curr_cmd_index != 0) {
+                dup2(pipe_fds[(curr_cmd_index-1)*2], STDIN_FILENO);
+            }
+
+            if(curr_cmd_index != num_of_pipes) {
+                dup2(pipe_fds[curr_cmd_index*2+1], STDOUT_FILENO);
+            }
+            
+            for(int i = 0 ; i<2*num_of_pipes ; i++) {
+                close(pipe_fds[i]);
+            } 
+            
+            if (execvp(command[0], command) < 0) {
+                perror("execvp");
+                exit(EXIT_FAILURE);
+            }
+        }
+        if(pid != 0) free(command);
+        curr_cmd_index++;
+    }
+
+    for(int i = 0 ; i<2*num_of_pipes ; i++) {
+        close(pipe_fds[i]);
+    }
+
+    for(int i = 0 ; i<=num_of_pipes ; i++) {
+        wait(NULL);
+    }
+
 }
