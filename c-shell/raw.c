@@ -6,6 +6,7 @@
 #include <stdbool.h>
 #include "raw_input.h"
 #include "history.h"
+#include "autocomplete.h"
 
 void repaintHelper(bool * , int , char *);
 
@@ -119,6 +120,13 @@ char *getLine() {
                 printf("\033[33m%c\033[0m", c);
                 fflush(stdout);
                 buffer[position++] = c;
+                buffer[position] = '\0';
+                char* autocomplete_suggestion = autocomplete(TRIE_ROOT, buffer);
+                if(autocomplete_suggestion) {
+                    printf("reached here");
+                    printf("%s",autocomplete_suggestion);
+                    free(autocomplete_suggestion);
+                }
 
                 if (position >= buffsize) {
                     buffsize += 1024;

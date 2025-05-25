@@ -8,6 +8,7 @@
 #include "raw_input.h"
 #include "history.h"
 #include "redirect.h"
+#include "autocomplete.h"
 
 #define TOK_DELIM " \t\r\n"
 #define RED "\x1b[31m"
@@ -24,13 +25,17 @@ char * *tokenize(char* , char* );
 int xec_call(char** );
 void exec_pipe_call(char** );
 
+TrieNode* TRIE_ROOT = NULL;
+
 int main () {
 
     char *LINE;
     char **ARGS;
     int status = 1;
-
+    TRIE_ROOT = create_node();
+    
     load_history();
+    load_context();
 
     do{
         printf(RED "<0Sk> " RESET);
@@ -46,6 +51,7 @@ int main () {
             ARGS = tokenize(LINE, TOK_DELIM);
             xec_call(ARGS);
         }
+        save_context(LINE);
         free(LINE);
         free(ARGS);
     } while(status);
