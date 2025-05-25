@@ -100,22 +100,21 @@ char *getLine() {
                             history_flag = true;
                         }
                     }
-                    else if (seq[1] == 'D') { 
-                        if (cursor > 0) {
-                            printf("\b");
-                            cursor--;
+                    else if (seq[1] == 'D') {
+                        if (position > 0) {
+                            position--;
+                            printf("\033[D");
                             fflush(stdout);
                         }
-                    } else if (seq[1] == 'C') { 
-                        if (cursor < position) {
+                    }else if (seq[1] == 'C') { 
+                        if (position < strlen(buffer)) {
+                            position++;
                             printf("\033[C");
-                            cursor++;
                             fflush(stdout);
                         }
                     }
                 }
             }  else {
-                //TODO: Fix "left" && "right"
                 repaintHelper(&history_flag, position, buffer);
                 printf("\033[33m%c\033[0m", c);
                 fflush(stdout);

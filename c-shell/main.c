@@ -16,14 +16,13 @@
 #define PIPE_DELIM "|"  
 
 // TODO: Autocomplete maybe using tries?
-// TODO: Add support to the left and right arrow keys
 // TODO: Handle edge cases more gracefully
 // TODO: Better signal Handling
 // TODO: Support conditional Chaining 
 
-char * *tokenize(char * , char *);
-int xec_call(char ** );
-void exec_pipe_call(char **);
+char * *tokenize(char* , char* );
+int xec_call(char** );
+void exec_pipe_call(char** );
 
 int main () {
 
@@ -54,10 +53,10 @@ int main () {
     return 0;
 }
 
-char * *tokenize(char *line, char * DELIM) {
+char** tokenize(char* line, char* DELIM) {
 
     int buffsize = 1024;
-    char * *tokens = malloc(sizeof(char *)*buffsize);
+    char * *tokens = malloc(sizeof(char *) * buffsize);
     int position = 0;
 
     if(!tokens) {
@@ -149,10 +148,10 @@ void exec_pipe_call(char **ARGS) {
     int num_of_pipes = -1;
     while(ARGS[num_of_pipes+1] != NULL) num_of_pipes++;
 
-    int pipe_fds[2*num_of_pipes];
+    int pipe_fds[2 * num_of_pipes];
 
     for(int i = 0 ; i< num_of_pipes; i++) {
-        if(pipe(pipe_fds+(i*2)) < 0) {
+        if(pipe(pipe_fds + (i*2)) < 0) {
             perror("Pipe creation failed");
             exit(EXIT_FAILURE);
         }
@@ -166,14 +165,14 @@ void exec_pipe_call(char **ARGS) {
         pid = fork();
         if(pid == 0) {
             if(curr_cmd_index != 0) {
-                dup2(pipe_fds[(curr_cmd_index-1)*2], STDIN_FILENO);
+                dup2(pipe_fds[(curr_cmd_index-1) * 2], STDIN_FILENO);
             }
 
             if(curr_cmd_index != num_of_pipes) {
-                dup2(pipe_fds[curr_cmd_index*2+1], STDOUT_FILENO);
+                dup2(pipe_fds[curr_cmd_index * 2 + 1], STDOUT_FILENO);
             }
             
-            for(int i = 0 ; i<2*num_of_pipes ; i++) {
+            for(int i = 0 ; i < 2*num_of_pipes ; i++) {
                 close(pipe_fds[i]);
             } 
             
@@ -186,11 +185,11 @@ void exec_pipe_call(char **ARGS) {
         curr_cmd_index++;
     }
 
-    for(int i = 0 ; i<2*num_of_pipes ; i++) {
+    for(int i = 0 ; i < 2*num_of_pipes ; i++) {
         close(pipe_fds[i]);
     }
 
-    for(int i = 0 ; i<=num_of_pipes ; i++) {
+    for(int i = 0 ; i <= num_of_pipes ; i++) {
         wait(NULL);
     }
 
