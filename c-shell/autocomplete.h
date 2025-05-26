@@ -8,7 +8,7 @@ typedef struct TrieNode {
     bool isEndOfWord;
 }TrieNode;
 
- extern TrieNode* TRIE_ROOT;
+extern TrieNode* TRIE_ROOT;
 
 TrieNode* create_node();
 void insert(TrieNode* root, const char* word);

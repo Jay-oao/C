@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS = -Wall -Wextra 
-OBJS = main.o raw.o history.o redirect.o
-DEPS = raw_input.h history.h redirect.h
+OBJS = main.o raw.o history.o redirect.o autocomplete.o
+DEPS = raw_input.h history.h redirect.h autocomplete.h
 
 all: shell
 

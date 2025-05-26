@@ -33,6 +33,10 @@ int main () {
     char **ARGS;
     int status = 1;
     TRIE_ROOT = create_node();
+    if (!TRIE_ROOT) {
+        fprintf(stderr, "Failed to allocate memory for TRIE_ROOT\n");
+        exit(EXIT_FAILURE);
+    }
     
     load_history();
     load_context();
