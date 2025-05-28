@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <signal.h>
 #include "raw_input.h"
 #include "history.h"
 #include "autocomplete.h"
@@ -16,6 +17,9 @@
 #define BLUE "\033[34m"
 #define YELLOW "\033[33m"
 #define T_RESET "\033[0m"
+#define CTRLT 20
+#define BACKSPACE 127
+#define ARROWKEYSSTART '\033'
 
 void repaintHelper(bool * , int , char *);
 
@@ -56,7 +60,7 @@ char *getLine() {
                 repaintHelper(&history_flag, position, buffer);
                 printf("\n");
                 break;
-            } else if(c == 127) {
+            } else if(c == BACKSPACE) {
                 if(position > 0) {
                     position--;
                     printf("\b \b");
@@ -146,7 +150,9 @@ char *getLine() {
                         }
                     }
                 }
-            }  else {
+            } else if(c == CTRLT) {
+                kill(getpid(), SIGTERM);
+            } else {
                 repaintHelper(&history_flag, position, buffer);
                 printf(YELLOW "%c" T_RESET, c);
                 fflush(stdout);

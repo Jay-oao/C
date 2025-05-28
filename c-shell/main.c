@@ -5,12 +5,14 @@
 #include <sys/wait.h>
 #include <limits.h>
 #include <stdbool.h>
+#include <signal.h>
 #include "tokenize.h"
 #include "raw_input.h"
 #include "history.h"
 #include "redirect.h"
 #include "autocomplete.h"
 #include "logical.h"
+#include "signal_handler.h"
 
 #define TOK_DELIM " \t\r\n"
 #define RED "\x1b[31m"
@@ -18,7 +20,6 @@
 #define PIPE_DELIM "|"  
 
 // TODO: Handle edge cases more gracefully
-// TODO: Better signal Handling
 
 char * *tokenize(char* , char* );
 int xec_call(char** );
@@ -36,9 +37,10 @@ int main () {
         fprintf(stderr, "Failed to allocate memory for TRIE_ROOT\n");
         exit(EXIT_FAILURE);
     }
-    
+
     load_history();
     load_context();
+    setup_signal_handlers();
 
     do{
         ARGS = NULL;
