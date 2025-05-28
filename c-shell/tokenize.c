@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include "tokenize.h"
 
 char** tokenize(char* line, char* DELIM) {
 
@@ -14,7 +16,7 @@ char** tokenize(char* line, char* DELIM) {
 
     char *token = strtok(line, DELIM);
     while(token != NULL) {
-        tokens[position++] = token;
+        tokens[position++] = strdup(token);
         if(position >= buffsize) {
             buffsize += 1024;
             tokens = realloc(tokens, sizeof(char *) * buffsize);

@@ -2,7 +2,11 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <limits.h>
+#include <string.h>
 #include <unistd.h>
+#include "execute.h"
+#include "tokenize.h"
+#include "redirect.h"
 
 #define TOK_DELIM " \t\r\n"
 #define PIPE_DELIM "|"  
@@ -23,7 +27,7 @@ int xec_call(char * *args) {
 
     else if(strcmp(args[0],"cd") == 0){
         chdir(args[1]);
-        return 1;
+        return 0;
     }
 
     else if(strcmp(args[0],"pwd") == 0){
@@ -33,7 +37,7 @@ int xec_call(char * *args) {
         }
         char cwd[PATH_MAX];
         printf("%s\n",getcwd(cwd, PATH_MAX));
-        return 1;
+        return 0;
     }
 
     //Currently handles only one '>' '<' '>>'
@@ -65,7 +69,7 @@ int xec_call(char * *args) {
         restore_streams();
     }
 
-    return 1;
+    return 0;
 }
 
 void exec_pipe_call(char **ARGS) {

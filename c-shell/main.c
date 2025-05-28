@@ -10,6 +10,7 @@
 #include "history.h"
 #include "redirect.h"
 #include "autocomplete.h"
+#include "logical.h"
 
 #define TOK_DELIM " \t\r\n"
 #define RED "\x1b[31m"
@@ -18,7 +19,6 @@
 
 // TODO: Handle edge cases more gracefully
 // TODO: Better signal Handling
-// TODO: Support conditional Chaining 
 
 char * *tokenize(char* , char* );
 int xec_call(char** );
@@ -41,6 +41,7 @@ int main () {
     load_context();
 
     do{
+        ARGS = NULL;
         printf(RED "<0Sk> " RESET);
         fflush(stdout);
         LINE = getLine();
@@ -50,13 +51,19 @@ int main () {
         if(strchr(LINE, '|') != NULL) {
             ARGS = tokenize(LINE,PIPE_DELIM);
             exec_pipe_call(ARGS);   
+        } else if(strstr(LINE, "&&") != NULL || strstr(LINE,"||") != NULL) {
+            ASTNode* root = parse_chain(LINE);
+            eval_ast(root);
+            free_ast(root);
         } else {
             ARGS = tokenize(LINE, TOK_DELIM);
             xec_call(ARGS);
         }
         save_context(LINE);
         free(LINE);
-        free(ARGS);
+        if(ARGS){
+            free(ARGS);
+        }
     } while(status);
 
     return 0;

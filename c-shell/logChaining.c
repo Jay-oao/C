@@ -1,23 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "tokenize.h"
+#include "execute.h"
+#include "logical.h"
 
 #define TOK_DELIM " \t\r\n"
-
-typedef enum {
-    NODE_CMD,
-    NODE_AND,
-    NODE_OR
-}NodeType;
-
-typedef struct _AST_Node {
-    NodeType node;
-    char** argv;
-    struct _AST_Node* left;
-    struct _AST_Node* right;
-} ASTNode;
-
-ASTNode* ASTroot = NULL;
 
 ASTNode* parse_chain(char* cmds) {
     char* p = cmds;
@@ -58,7 +46,7 @@ ASTNode* parse_chain(char* cmds) {
 
     free(left_str);
     free(right_str);
-
+    
     return op_node;
 }
 
@@ -88,4 +76,16 @@ int eval_ast(ASTNode* node) {
     }
 
     return -1;
+}
+
+void free_ast(ASTNode* node) {
+    if (!node) return;
+    free_ast(node->left);
+    free_ast(node->right);
+    if (node->argv) {
+        for (int i = 0; node->argv[i]; i++)
+            free(node->argv[i]);
+        free(node->argv);
+    }
+    free(node);
 }

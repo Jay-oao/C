@@ -1,15 +1,20 @@
 CC = gcc
-CFLAGS = -Wall -Wextra 
-OBJS = main.o raw.o history.o redirect.o autocomplete.o
-DEPS = raw_input.h history.h redirect.h autocomplete.h
+CFLAGS = -Wall -Wextra
 
-all: shell
+SRCS = autocomplete.c execute.c history.c logChaining.c main.c raw.c redirect.c tokenize.c
+OBJS = $(SRCS:.c=.o)
 
-%.o: %.c $(DEPS)
+HEADERS = autocomplete.h execute.h redirect.h logical.h
+
+TARGET = shell
+
+all: $(TARGET)
+
+$(TARGET): $(OBJS)
+	$(CC) $(CFLAGS) $(OBJS) -o $(TARGET)
+
+%.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-shell: $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) -o shell
-
 clean:
-	rm -f *.o 
+	rm -f *.o $(TARGET)
