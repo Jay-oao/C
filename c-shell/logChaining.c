@@ -8,7 +8,6 @@
 #define TOK_DELIM " \t\r\n"
 
 ASTNode* parse_chain(char* cmds) {
-    char* p = cmds;
     NodeType op_type;
     char* op_pos = NULL;
    

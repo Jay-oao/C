@@ -43,7 +43,6 @@ char *getLine() {
 
     int buffsize = 1024;
     int position = 0;
-    int cursor = 0;
     char c;
     bool history_flag = false;
     char* autocomplete_suggestion = NULL;
@@ -169,7 +168,6 @@ char *getLine() {
 
                 buffer[position] = '\0';
 
-                int diff = 0;
                 int suggestion_length;
 
                 if (autocomplete_suggestion) {

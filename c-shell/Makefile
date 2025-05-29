@@ -1,10 +1,8 @@
 CC = gcc
-CFLAGS = -Wall -Wextra
+#CFLAGS = -Wall -Wextra
 
-SRCS = autocomplete.c execute.c history.c logChaining.c main.c raw.c redirect.c tokenize.c
+SRCS = autocomplete.c execute.c history.c logChaining.c main.c raw.c redirect.c tokenize.c signal_handle.c
 OBJS = $(SRCS:.c=.o)
-
-HEADERS = autocomplete.h execute.h redirect.h logical.h
 
 TARGET = shell
 
@@ -17,4 +15,6 @@ $(TARGET): $(OBJS)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -f *.o $(TARGET)
+	$(MAKE) all
+	rm -f *.o
+	
